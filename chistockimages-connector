@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: ChiStockImages Connector
-Plugin URI: https://yourwebsite.com/chistockimages-connector
+Plugin URI: https://chistockimages.com/chistockimages-connector
 Description: This plugin connects your WordPress website to your ChiStockImages account.
 Version: 1.0
-Author: Your Name
-Author URI: https://yourwebsite.com/
+Author: Luke Krzysztofiak
+Author URI: https://Lukek.dev/
 License: GPL2
 */
 
