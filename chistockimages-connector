@@ -1,0 +1,65 @@
+<?php
+/*
+Plugin Name: ChiStockImages Connector
+Plugin URI: https://yourwebsite.com/chistockimages-connector
+Description: This plugin connects your WordPress website to your ChiStockImages account.
+Version: 1.0
+Author: Your Name
+Author URI: https://yourwebsite.com/
+License: GPL2
+*/
+
+// Ensure WordPress has loaded before the plugin
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+class ChiStockImages_Connector {
+	private $api_key;
+	private $api_url = 'https://chistockimages.com/api/';
+
+	public function __construct( $api_key ) {
+		$this->api_key = $api_key;
+
+		// Add a shortcode to display images
+		add_shortcode('chistockimages', array($this, 'display_images'));
+	}
+
+	// Function to retrieve images from the API
+	public function get_images( $count = 10 ) {
+		$response = wp_remote_get( $this->api_url . 'get_images?api_key=' . $this->api_key . '&count=' . $count );
+		if ( is_wp_error( $response ) ) {
+			return false;
+		}
+
+		$images = json_decode( wp_remote_retrieve_body( $response ), true );
+		if ( empty( $images ) ) {
+			return false;
+		}
+
+		return $images;
+	}
+
+	// Function to display images using a shortcode
+	public function display_images( $atts ) {
+		$atts = shortcode_atts( array(
+			'count' => 10,
+		), $atts );
+
+		$images = $this->get_images( $atts['count'] );
+		if ( ! $images ) {
+			return 'No images found.';
+		}
+
+		$output = '<div class="chistockimages-gallery">';
+		foreach ( $images as $image ) {
+			$output .= '<img src="' . esc_url( $image['url'] ) . '" alt="' . esc_attr( $image['title'] ) . '">';
+		}
+		$output .= '</div>';
+
+		return $output;
+	}
+}
+
+// Instantiate the plugin with your API key
+$chistockimages_connector = new ChiStockImages_Connector( 'your-api-key' );
